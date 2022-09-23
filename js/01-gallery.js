@@ -28,20 +28,29 @@ function createGalleryItems(galleryItems) {
 
 function onGalleryContainerClick(event) {
   event.preventDefault();
-  
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+
   let urlBigImg = event.target.dataset.source;
   console.log(urlBigImg);
 
-  const instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
     <img src="${urlBigImg}" width="800" height="600">
-    `);
+    `,
+    {
+      onClose: (instance) => {
+        document.removeEventListener("keydown", closeModalWindow);
+      },
+    }
+  );
 
   document.addEventListener("keydown", closeModalWindow);
   instance.show();
 
   function closeModalWindow(event) {
     if (event.code === "Escape") {
-      document.removeEventListener("keydown", closeModalWindow);
       instance.close();
       console.log(event);
     }
